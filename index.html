@@ -370,13 +370,13 @@ div.tocify {
 <div id="packages-definieren" class="section level3">
 <h3>Packages definieren</h3>
 <pre class="r"><code># von https://mran.revolutionanalytics.com/web/packages/checkpoint/vignettes/using-checkpoint-with-knitr.html
-cat(&quot;library(magrittr)
-library(tidyr)
-library(purrr)
-library(dplyr)
+# tidyverse: https://blog.rstudio.org/2016/09/15/tidyverse-1-0-0/ 
+cat(&quot;library(tidyverse)
+library(magrittr)
 library(readxl)
-library(ggplot2)
-library(scales)&quot;, 
+library(jsonlite)
+library(scales)
+library(lintr)&quot;, 
 file = &quot;manifest.R&quot;)
 package_date &lt;- &quot;2017-04-12&quot;</code></pre>
 </div>
@@ -399,32 +399,36 @@ rm(package_date)</code></pre>
 <div id="packages-laden" class="section level3">
 <h3>Packages laden</h3>
 <pre class="r"><code>source(&quot;manifest.R&quot;)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
 <pre><code>## 
-## Attaching package: 'tidyr'</code></pre>
-<pre><code>## The following object is masked from 'package:magrittr':
+## Attaching package: 'magrittr'</code></pre>
+<pre><code>## The following object is masked from 'package:purrr':
+## 
+##     set_names</code></pre>
+<pre><code>## The following object is masked from 'package:tidyr':
 ## 
 ##     extract</code></pre>
 <pre><code>## 
-## Attaching package: 'purrr'</code></pre>
-<pre><code>## The following object is masked from 'package:magrittr':
+## Attaching package: 'jsonlite'</code></pre>
+<pre><code>## The following object is masked from 'package:purrr':
 ## 
-##     set_names</code></pre>
-<pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:purrr':
-## 
-##     contains, order_by</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union</code></pre>
+##     flatten</code></pre>
 <pre><code>## 
 ## Attaching package: 'scales'</code></pre>
 <pre><code>## The following object is masked from 'package:purrr':
 ## 
 ##     discard</code></pre>
+<pre><code>## The following object is masked from 'package:readr':
+## 
+##     col_factor</code></pre>
 <pre class="r"><code>unlink(&quot;manifest.R&quot;)</code></pre>
 </div>
 <div id="ggplot2-themes-definieren" class="section level3">
@@ -850,7 +854,497 @@ p</code></pre>
 anteil_heizung_2015 %&gt;% 
   mutate(Verhältnis = round(Verhältnis, 3)) %&gt;%  
   select(Jahr, Energietraeger = Energieträger, Anteil = Verhältnis, Kanton = GDEKT) %&gt;% 
-  write.csv(&quot;output/energietraeger.csv&quot;, row.names = F)</code></pre>
+  write.csv(&quot;output/energietraeger.csv&quot;, row.names = F)
+lintr::lint(filename = &quot;main.Rmd&quot;)</code></pre>
+<pre><code>## main.Rmd:86:1: style: Variable and function names should be all lowercase.
+## detachAllPackages &lt;- function() {
+## ^~~~~~~~~~~~~~~~~
+## main.Rmd:87:1: style: lines should not be more than 80 characters.
+##   basic.packages.blank &lt;-  c(&quot;stats&quot;, &quot;graphics&quot;, &quot;grDevices&quot;, &quot;utils&quot;, &quot;datasets&quot;, &quot;methods&quot;, &quot;base&quot;)
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:87:3: style: Words within variable and function names should be separated by '_' rather than '.'.
+##   basic.packages.blank &lt;-  c(&quot;stats&quot;, &quot;graphics&quot;, &quot;grDevices&quot;, &quot;utils&quot;, &quot;datasets&quot;, &quot;methods&quot;, &quot;base&quot;)
+##   ^~~~~~~~~~~~~~~~~~~~
+## main.Rmd:88:39: style: Words within variable and function names should be separated by '_' rather than '.'.
+##   basic.packages &lt;- paste(&quot;package:&quot;, basic.packages.blank, sep = &quot;&quot;)
+##                                       ^~~~~~~~~~~~~~~~~~~~
+## main.Rmd:89:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:90:1: style: lines should not be more than 80 characters.
+##   package.list &lt;- search()[ifelse(unlist(gregexpr(&quot;package:&quot;, search())) == 1, TRUE, FALSE)]
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:91:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:93:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:98:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:100:1: style: lines should not be more than 80 characters.
+##   #   lapply(rev(setdiff(loadedNamespaces(), basic.packages.blank)), function(pkg){
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:101:9: style: Commented code should be removed.
+##   #     unloadNamespace(pkg)
+##         ^~~~~~~~~~~~~~~~~~~~
+## main.Rmd:102:9: style: Commented code should be removed.
+##   #     print(paste(&quot;namespace &quot;, package, &quot; unloaded&quot;, sep = &quot;&quot;))
+##         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:106:1: style: Variable and function names should be all lowercase.
+## detachAllPackages()
+## ^~~~~~~~~~~~~~~~~
+## main.Rmd:108:8: style: Put spaces around all infix operators.
+## rm(list=ls(all=TRUE)) 
+##       ~^~
+## main.Rmd:108:15: style: Put spaces around all infix operators.
+## rm(list=ls(all=TRUE)) 
+##              ~^~
+## main.Rmd:108:22: style: Trailing whitespace is superfluous.
+## rm(list=ls(all=TRUE)) 
+##                      ^
+## main.Rmd:112:1: style: lines should not be more than 80 characters.
+##                      &quot;tgrossen&quot; = &quot;~/SRF/Projekte/public/2017-05-eng-heizungen/analysis&quot;,
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:112:36: warning: Do not use absolute paths.
+##                      &quot;tgrossen&quot; = &quot;~/SRF/Projekte/public/2017-05-eng-heizungen/analysis&quot;,
+##                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:115:1: style: Opening curly braces should never go on their own line and should always be followed by a new line.
+## {
+## ^
+## main.Rmd:118:1: style: Opening curly braces should never go on their own line and should always be followed by a new line.
+## {
+## ^
+## main.Rmd:133:17: style: Trailing whitespace is superfluous.
+## library(lintr)&quot;, 
+##                 ^
+## main.Rmd:142:3: style: Place a space before left parenthesis, except in a function call.
+## if(!require(checkpoint)) {
+##   ^
+## main.Rmd:143:5: style: Place a space before left parenthesis, except in a function call.
+##   if(!require(devtools)){
+##     ^
+## main.Rmd:147:1: style: lines should not be more than 80 characters.
+##   devtools::install_github(&quot;checkpoint&quot;, username = &quot;RevolutionAnalytics&quot;, ref = &quot;v0.3.2&quot;, repos = &quot;http://cran.us.r-project.org&quot;)
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:150:3: style: Place a space before left parenthesis, except in a function call.
+## if(!dir.exists(&quot;~/.checkpoint&quot;)){
+##   ^
+## main.Rmd:150:17: warning: Do not use absolute paths.
+## if(!dir.exists(&quot;~/.checkpoint&quot;)){
+##                 ^~~~~~~~~~~~~
+## main.Rmd:151:15: warning: Do not use absolute paths.
+##   dir.create(&quot;~/.checkpoint&quot;)
+##               ^~~~~~~~~~~~~
+## main.Rmd:153:1: style: lines should not be more than 80 characters.
+## checkpoint(snapshotDate = package_date, project = path_to_wd, verbose = T, scanForPackages = T, use.knitr = F)
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:171:76: style: Trailing whitespace is superfluous.
+##       title = element_text(size = 16, family = base_family, face = &quot;bold&quot;), 
+##                                                                            ^
+## main.Rmd:173:45: style: Trailing whitespace is superfluous.
+##       legend.text = element_text(size = 14), 
+##                                             ^
+## main.Rmd:177:31: style: Trailing whitespace is superfluous.
+##       legend.box = &quot;vertical&quot;, 
+##                               ^
+## main.Rmd:179:56: style: Trailing whitespace is superfluous.
+##       plot.background = element_rect(fill = &quot;#f5f5f2&quot;), 
+##                                                        ^
+## main.Rmd:180:57: style: Trailing whitespace is superfluous.
+##       panel.background = element_rect(fill = &quot;#f5f5f2&quot;), 
+##                                                         ^
+## main.Rmd:181:58: style: Trailing whitespace is superfluous.
+##       legend.background = element_rect(fill = &quot;#f5f5f2&quot;),  
+##                                                          ^~
+## main.Rmd:188:32: style: Commas should always have a space after.
+##       plot.margin = unit(c(0.9,0.9,0.9,0.9), &quot;cm&quot;),
+##                                ^
+## main.Rmd:188:36: style: Commas should always have a space after.
+##       plot.margin = unit(c(0.9,0.9,0.9,0.9), &quot;cm&quot;),
+##                                    ^
+## main.Rmd:188:40: style: Commas should always have a space after.
+##       plot.margin = unit(c(0.9,0.9,0.9,0.9), &quot;cm&quot;),
+##                                        ^
+## main.Rmd:207:43: style: Trailing whitespace is superfluous.
+##     legend.text = element_text(size = 10), 
+##                                           ^
+## main.Rmd:212:30: style: Commas should always have a space after.
+##     plot.margin = unit(c(0.5,0.1,0.1,0.1), &quot;cm&quot;),
+##                              ^
+## main.Rmd:212:34: style: Commas should always have a space after.
+##     plot.margin = unit(c(0.5,0.1,0.1,0.1), &quot;cm&quot;),
+##                                  ^
+## main.Rmd:212:38: style: Commas should always have a space after.
+##     plot.margin = unit(c(0.5,0.1,0.1,0.1), &quot;cm&quot;),
+##                                      ^
+## main.Rmd:232:66: style: Trailing whitespace is superfluous.
+##     plot.background = element_rect(fill = &quot;#f5f5f2&quot;, color = NA), 
+##                                                                  ^
+## main.Rmd:233:67: style: Trailing whitespace is superfluous.
+##     panel.background = element_rect(fill = &quot;#f5f5f2&quot;, color = NA), 
+##                                                                   ^
+## main.Rmd:240:1: style: lines should not be more than 80 characters.
+##   g = grobTree(textGrob(paste(&quot;Quelle:&quot;, text), x = ifelse(vpos == &quot;top&quot;, 0.5, 0.955), y = ifelse(vpos == &quot;top&quot;, 0.98, 0.08), just = ifelse(vpos == &quot;top&quot;, &quot;centre&quot;, &quot;right&quot;), vjust = ifelse(vpos == &quot;top&quot;, &quot;top&quot;, &quot;bottom&quot;), gp = gpar(fontfamily = &quot;SRG SSR Type&quot;, col = &quot;#555555&quot;, fontsize = 14)))
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:240:5: style: Use &lt;-, not =, for assignment.
+##   g = grobTree(textGrob(paste(&quot;Quelle:&quot;, text), x = ifelse(vpos == &quot;top&quot;, 0.5, 0.955), y = ifelse(vpos == &quot;top&quot;, 0.98, 0.08), just = ifelse(vpos == &quot;top&quot;, &quot;centre&quot;, &quot;right&quot;), vjust = ifelse(vpos == &quot;top&quot;, &quot;top&quot;, &quot;bottom&quot;), gp = gpar(fontfamily = &quot;SRG SSR Type&quot;, col = &quot;#555555&quot;, fontsize = 14)))
+##     ^
+## main.Rmd:240:7: warning: no visible global function definition for 'grobTree'
+##   g = grobTree(textGrob(paste(&quot;Quelle:&quot;, text), x = ifelse(vpos == &quot;top&quot;, 0.5, 0.955), y = ifelse(vpos == &quot;top&quot;, 0.98, 0.08), just = ifelse(vpos == &quot;top&quot;, &quot;centre&quot;, &quot;right&quot;), vjust = ifelse(vpos == &quot;top&quot;, &quot;top&quot;, &quot;bottom&quot;), gp = gpar(fontfamily = &quot;SRG SSR Type&quot;, col = &quot;#555555&quot;, fontsize = 14)))
+##       ^~~~~~~~
+## main.Rmd:240:16: warning: no visible global function definition for 'textGrob'
+##   g = grobTree(textGrob(paste(&quot;Quelle:&quot;, text), x = ifelse(vpos == &quot;top&quot;, 0.5, 0.955), y = ifelse(vpos == &quot;top&quot;, 0.98, 0.08), just = ifelse(vpos == &quot;top&quot;, &quot;centre&quot;, &quot;right&quot;), vjust = ifelse(vpos == &quot;top&quot;, &quot;top&quot;, &quot;bottom&quot;), gp = gpar(fontfamily = &quot;SRG SSR Type&quot;, col = &quot;#555555&quot;, fontsize = 14)))
+##                ^~~~~~~~
+## main.Rmd:240:229: warning: no visible global function definition for 'gpar', Did you mean 'par'?
+##   g = grobTree(textGrob(paste(&quot;Quelle:&quot;, text), x = ifelse(vpos == &quot;top&quot;, 0.5, 0.955), y = ifelse(vpos == &quot;top&quot;, 0.98, 0.08), just = ifelse(vpos == &quot;top&quot;, &quot;centre&quot;, &quot;right&quot;), vjust = ifelse(vpos == &quot;top&quot;, &quot;top&quot;, &quot;bottom&quot;), gp = gpar(fontfamily = &quot;SRG SSR Type&quot;, col = &quot;#555555&quot;, fontsize = 14)))
+##                                                                                                                                                                                                                                     ^~~~
+## main.Rmd:258:31: style: Commas should always have a space after.
+## rgs_skiplines &lt;- rev(c(rep(22,5), rep(16,2)))
+##                               ^
+## main.Rmd:258:42: style: Commas should always have a space after.
+## rgs_skiplines &lt;- rev(c(rep(22,5), rep(16,2)))
+##                                          ^
+## main.Rmd:263:4: style: Place a space before left parenthesis, except in a function call.
+## for(i in 1:7){
+##    ^
+## main.Rmd:273:5: style: Place a space before left parenthesis, except in a function call.
+##   if(i == 4){
+##     ^
+## main.Rmd:276:1: style: lines should not be more than 80 characters.
+##   gebäude[[i]] &lt;- quiet_read_excel(&quot;input/GDE_GEB_HEIZ_2009-2015_20170419.xls&quot;, sheet = (i + 1), 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:276:97: style: Trailing whitespace is superfluous.
+##   gebäude[[i]] &lt;- quiet_read_excel(&quot;input/GDE_GEB_HEIZ_2009-2015_20170419.xls&quot;, sheet = (i + 1), 
+##                                                                                                 ^
+## main.Rmd:286:64: style: Trailing whitespace is superfluous.
+##                                  `Zentralheizung_mehrere` = X7, 
+##                                                                ^
+## main.Rmd:287:63: style: Trailing whitespace is superfluous.
+##                                  `Öffentliche Fernwärme` = X8, 
+##                                                               ^
+## main.Rmd:289:56: style: Trailing whitespace is superfluous.
+##                                  `Keine Heizung` = X10, 
+##                                                        ^
+## main.Rmd:298:67: style: Trailing whitespace is superfluous.
+##                                  `Andere_Energieträger` = X19) %&gt;% 
+##                                                                   ^
+## main.Rmd:299:31: style: Trailing whitespace is superfluous.
+##     filter(!is.na(BFS_NR)) %&gt;% 
+##                               ^
+## main.Rmd:301:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:313:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:315:5: style: Place a space before left parenthesis, except in a function call.
+##   if(j == 9){
+##     ^
+## main.Rmd:319:1: style: lines should not be more than 80 characters.
+##   rgs[[i]] &lt;- quiet_read_excel(filenames_to_read, skip = rgs_skiplines[i] , col_names = F)$result %&gt;% 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:319:75: style: Commas should never have a space before.
+##   rgs[[i]] &lt;- quiet_read_excel(filenames_to_read, skip = rgs_skiplines[i] , col_names = F)$result %&gt;% 
+##                                                                          ~^
+## main.Rmd:319:102: style: Trailing whitespace is superfluous.
+##   rgs[[i]] &lt;- quiet_read_excel(filenames_to_read, skip = rgs_skiplines[i] , col_names = F)$result %&gt;% 
+##                                                                                                      ^
+## main.Rmd:321:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:329:1: style: Trailing whitespace is superfluous.
+##   
+## ^~
+## main.Rmd:339:3: style: Commented code should be removed.
+## # fehler &lt;- do.call(rbind.data.frame, gebäude_kantone)
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:340:3: style: Commented code should be removed.
+## # # fehler &lt;- fehler[complete.cases(fehler),]
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:341:3: style: Commented code should be removed.
+## # save(fehler, file = &quot;input/fehler.RData&quot;)
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:346:3: style: Commented code should be removed.
+## # WHG_HEIZ &lt;- WHG_HEIZ[complete.cases(WHG_HEIZ),]
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:349:4: style: Place a space before left parenthesis, except in a function call.
+## for(bfs_id in fehler$BFS_NR) {
+##    ^
+## main.Rmd:350:1: style: lines should not be more than 80 characters.
+##   WHG_HEIZ[WHG_HEIZ$BFS_NR == bfs_id,]$KANTON &lt;- WHG_HEIZ[WHG_HEIZ$BFS_NR == bfs_id &amp; WHG_HEIZ$Jahr == 2015,]$KANTON
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:350:38: style: Commas should always have a space after.
+##   WHG_HEIZ[WHG_HEIZ$BFS_NR == bfs_id,]$KANTON &lt;- WHG_HEIZ[WHG_HEIZ$BFS_NR == bfs_id &amp; WHG_HEIZ$Jahr == 2015,]$KANTON
+##                                      ^
+## main.Rmd:350:109: style: Commas should always have a space after.
+##   WHG_HEIZ[WHG_HEIZ$BFS_NR == bfs_id,]$KANTON &lt;- WHG_HEIZ[WHG_HEIZ$BFS_NR == bfs_id &amp; WHG_HEIZ$Jahr == 2015,]$KANTON
+##                                                                                                             ^
+## main.Rmd:355:1: style: lines should not be more than 80 characters.
+##   gather (Energieträger, Häufigkeit_Energieträger, Heizöl:Andere_Energieträger) %&gt;%
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:356:1: style: lines should not be more than 80 characters.
+##   select(BFS_NR, Gemeindename, Kanton = KANTON, Jahr, Energieträger, Häufigkeit_Energieträger)  %&gt;%
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:357:1: style: lines should not be more than 80 characters.
+##   mutate(Kanton = as.factor(Kanton), Jahr = as.factor(Jahr), Energieträger = as.factor(Energieträger), Energieträger_Typ = &quot;klimafreundlich&quot;) %&gt;% 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:357:146: style: Trailing whitespace is superfluous.
+##   mutate(Kanton = as.factor(Kanton), Jahr = as.factor(Jahr), Energieträger = as.factor(Energieträger), Energieträger_Typ = &quot;klimafreundlich&quot;) %&gt;% 
+##                                                                                                                                                  ^
+## main.Rmd:358:18: style: Trailing whitespace is superfluous.
+##   arrange(Kanton)  
+##                  ^~
+## main.Rmd:361:1: style: lines should not be more than 80 characters.
+## energieträger_heizungen[energieträger_heizungen$Energieträger == &quot;Andere_Energieträger&quot;,]$Energieträger_Typ &lt;- &quot;andere&quot;
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:361:89: style: Commas should always have a space after.
+## energieträger_heizungen[energieträger_heizungen$Energieträger == &quot;Andere_Energieträger&quot;,]$Energieträger_Typ &lt;- &quot;andere&quot;
+##                                                                                         ^
+## main.Rmd:363:1: style: lines should not be more than 80 characters.
+## energieträger_heizungen[energieträger_heizungen$Energieträger == &quot;Elektrizität&quot; |
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:366:1: style: lines should not be more than 80 characters.
+##                           energieträger_heizungen$Energieträger == &quot;Kohle&quot;,]$Energieträger_Typ &lt;- &quot;nicht_klimafreundlich&quot;
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:366:76: style: Commas should always have a space after.
+##                           energieträger_heizungen$Energieträger == &quot;Kohle&quot;,]$Energieträger_Typ &lt;- &quot;nicht_klimafreundlich&quot;
+##                                                                            ^
+## main.Rmd:370:1: style: lines should not be more than 80 characters.
+## energieträger_heizungen %&lt;&gt;% mutate(Energieträger_Typ = as.factor(Energieträger_Typ))
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:376:1: style: lines should not be more than 80 characters.
+## rm(WHG_HEIZ, i, j, bfs_id, filenames_to_read, gebäude, gebäude_kantone, gebäude_skiplines, rgs_skiplines, sentinel, rgs)
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:382:40: style: Trailing whitespace is superfluous.
+## nach_typ &lt;- energieträger_heizungen %&gt;% 
+##                                        ^
+## main.Rmd:384:59: style: Trailing whitespace is superfluous.
+##   summarize(Summe_Typ = sum(Häufigkeit_Energieträger)) %&gt;% 
+##                                                           ^
+## main.Rmd:387:20: style: Trailing whitespace is superfluous.
+## nach_kanton_jahr &lt;- 
+##                    ^
+## main.Rmd:388:30: style: Trailing whitespace is superfluous.
+##   energieträger_heizungen %&gt;% 
+##                              ^
+## main.Rmd:389:29: style: Trailing whitespace is superfluous.
+##   group_by(Kanton, Jahr) %&gt;% 
+##                             ^
+## main.Rmd:392:46: style: Trailing whitespace is superfluous.
+## nach_typ %&lt;&gt;% left_join(nach_kanton_jahr) %&gt;% 
+##                                              ^
+## main.Rmd:395:40: style: Trailing whitespace is superfluous.
+## aenderung_prozentpunkte &lt;- nach_typ %&gt;% 
+##                                        ^
+## main.Rmd:396:1: style: lines should not be more than 80 characters.
+##   filter(Energieträger_Typ == &quot;klimafreundlich&quot; &amp; (Jahr == 2015 | Jahr == 2009)) %&gt;% 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:396:85: style: Trailing whitespace is superfluous.
+##   filter(Energieträger_Typ == &quot;klimafreundlich&quot; &amp; (Jahr == 2015 | Jahr == 2009)) %&gt;% 
+##                                                                                     ^
+## main.Rmd:397:23: style: Trailing whitespace is superfluous.
+##   group_by(Kanton) %&gt;% 
+##                       ^
+## main.Rmd:398:57: style: Trailing whitespace is superfluous.
+##   mutate(Unterschied = Verhältnis - lag(Verhältnis)) %&gt;% 
+##                                                         ^
+## main.Rmd:408:5: style: Commented code should be removed.
+## #   mutate(Kanton = factor(Kanton, labels = prozentpunkte_plot_sortiert$GDEKTNA, levels = prozentpunkte_plot_sortiert$Kanton))
+##     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:438:1: style: lines should not be more than 80 characters.
+## nach_jahr_ch_typ[nach_jahr_ch_typ$Jahr == 2015 &amp; nach_jahr_ch_typ$Energieträger_Typ == &quot;klimafreundlich&quot;,]$Verhältnis - nach_jahr_ch_typ[nach_jahr_ch_typ$Jahr == 2009 &amp; nach_jahr_ch_typ$Energieträger_Typ == &quot;klimafreundlich&quot;,]$Verhältnis
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:438:106: style: Commas should always have a space after.
+## nach_jahr_ch_typ[nach_jahr_ch_typ$Jahr == 2015 &amp; nach_jahr_ch_typ$Energieträger_Typ == &quot;klimafreundlich&quot;,]$Verhältnis - nach_jahr_ch_typ[nach_jahr_ch_typ$Jahr == 2009 &amp; nach_jahr_ch_typ$Energieträger_Typ == &quot;klimafreundlich&quot;,]$Verhältnis
+##                                                                                                          ^
+## main.Rmd:438:226: style: Commas should always have a space after.
+## nach_jahr_ch_typ[nach_jahr_ch_typ$Jahr == 2015 &amp; nach_jahr_ch_typ$Energieträger_Typ == &quot;klimafreundlich&quot;,]$Verhältnis - nach_jahr_ch_typ[nach_jahr_ch_typ$Jahr == 2009 &amp; nach_jahr_ch_typ$Energieträger_Typ == &quot;klimafreundlich&quot;,]$Verhältnis
+##                                                                                                                                                                                                                                  ^
+## main.Rmd:446:44: style: Trailing whitespace is superfluous.
+## nach_heizung &lt;- energieträger_heizungen %&gt;% 
+##                                            ^
+## main.Rmd:448:63: style: Trailing whitespace is superfluous.
+##   summarize(Summe_Heizung = sum(Häufigkeit_Energieträger)) %&gt;% 
+##                                                               ^
+## main.Rmd:450:50: style: Trailing whitespace is superfluous.
+## nach_heizung %&lt;&gt;% left_join(nach_kanton_jahr) %&gt;% 
+##                                                  ^
+## main.Rmd:453:61: style: Trailing whitespace is superfluous.
+## anteil_heizung_2015 &lt;- nach_heizung %&gt;% filter(Jahr == 2015) 
+##                                                             ^
+## main.Rmd:455:33: style: Trailing whitespace is superfluous.
+## nach_typ_kt_2015 &lt;- nach_typ %&gt;% 
+##                                 ^
+## main.Rmd:456:68: style: Trailing whitespace is superfluous.
+##   filter(Jahr == 2015 &amp; Energieträger_Typ == &quot;klimafreundlich&quot;) %&gt;% 
+##                                                                    ^
+## main.Rmd:457:32: style: Trailing whitespace is superfluous.
+##   arrange(desc(Verhältnis)) %&gt;% 
+##                                ^
+## main.Rmd:458:65: style: Trailing whitespace is superfluous.
+##   mutate(kantons_integer = as.integer(as.character(Kanton))) %&gt;% 
+##                                                                 ^
+## main.Rmd:461:25: style: Trailing whitespace is superfluous.
+## anteil_heizung_2015 %&lt;&gt;%   
+##                         ^~~
+## main.Rmd:462:65: style: Trailing whitespace is superfluous.
+##   mutate(kantons_integer = as.integer(as.character(Kanton))) %&gt;% 
+##                                                                 ^
+## main.Rmd:463:67: style: Trailing whitespace is superfluous.
+##   left_join(kantons_namen, by = c(&quot;kantons_integer&quot; = &quot;KTNR&quot;)) %&gt;% 
+##                                                                   ^
+## main.Rmd:464:1: style: lines should not be more than 80 characters.
+##   mutate(GDEKT = factor(GDEKT, labels = rev(nach_typ_kt_2015$GDEKT), levels = rev(nach_typ_kt_2015$GDEKT))) %&gt;% 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:464:112: style: Trailing whitespace is superfluous.
+##   mutate(GDEKT = factor(GDEKT, labels = rev(nach_typ_kt_2015$GDEKT), levels = rev(nach_typ_kt_2015$GDEKT))) %&gt;% 
+##                                                                                                                ^
+## main.Rmd:465:1: style: lines should not be more than 80 characters.
+##   mutate(Energieträger = factor(Energieträger, levels = nach_jahr_ch_typ_alle$Energieträger))
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:490:3: style: Commented code should be removed.
+## # ggsave(p, filename = &quot;output/linien.png&quot;, width = 5, height = 10)
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:496:52: style: Trailing whitespace is superfluous.
+## aenderung_prozentpunkte_slope_graph &lt;- nach_typ %&gt;% 
+##                                                    ^
+## main.Rmd:497:1: style: lines should not be more than 80 characters.
+##   filter(Energieträger_Typ == &quot;klimafreundlich&quot; &amp; (Jahr == 2015 | Jahr == 2009)) 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:497:81: style: Trailing whitespace is superfluous.
+##   filter(Energieträger_Typ == &quot;klimafreundlich&quot; &amp; (Jahr == 2015 | Jahr == 2009)) 
+##                                                                                 ^
+## main.Rmd:499:41: style: Trailing whitespace is superfluous.
+## aenderung_prozentpunkte_slope_graph %&lt;&gt;%   
+##                                         ^~~
+## main.Rmd:500:65: style: Trailing whitespace is superfluous.
+##   mutate(kantons_integer = as.integer(as.character(Kanton))) %&gt;% 
+##                                                                 ^
+## main.Rmd:501:67: style: Trailing whitespace is superfluous.
+##   left_join(kantons_namen, by = c(&quot;kantons_integer&quot; = &quot;KTNR&quot;)) %&gt;% 
+##                                                                   ^
+## main.Rmd:502:80: style: Trailing whitespace is superfluous.
+##   mutate(Verhältnis_label = paste0(&quot;   &quot;, round(Verhältnis * 100, 1), &quot;%&quot;)) %&gt;% 
+##                                                                                ^
+## main.Rmd:503:1: style: lines should not be more than 80 characters.
+##   mutate(Kanton_label = paste0(GDEKT, &quot; &quot;, round(Verhältnis * 100, 1), &quot;%   &quot;)) %&gt;% 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:503:84: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_label = paste0(GDEKT, &quot; &quot;, round(Verhältnis * 100, 1), &quot;%   &quot;)) %&gt;% 
+##                                                                                    ^
+## main.Rmd:504:32: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_vjust = .5) %&gt;% 
+##                                ^
+## main.Rmd:505:68: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_vjust = ifelse(GDEKT == &quot;LU&quot;, 1, Kanton_vjust)) %&gt;% 
+##                                                                    ^
+## main.Rmd:506:68: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_vjust = ifelse(GDEKT == &quot;SZ&quot;, 2, Kanton_vjust)) %&gt;% 
+##                                                                    ^
+## main.Rmd:507:69: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_vjust = ifelse(GDEKT == &quot;BE&quot;, .8, Kanton_vjust)) %&gt;% 
+##                                                                     ^
+## main.Rmd:508:69: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_vjust = ifelse(GDEKT == &quot;SG&quot;, .8, Kanton_vjust)) %&gt;% 
+##                                                                     ^
+## main.Rmd:509:68: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_vjust = ifelse(GDEKT == &quot;TG&quot;, 2, Kanton_vjust)) %&gt;% 
+##                                                                    ^
+## main.Rmd:510:70: style: Trailing whitespace is superfluous.
+##   mutate(Kanton_vjust = ifelse(GDEKT == &quot;SH&quot;, 1.5, Kanton_vjust)) %&gt;% 
+##                                                                      ^
+## main.Rmd:514:1: style: lines should not be more than 80 characters.
+## p &lt;- ggplot(aenderung_prozentpunkte_slope_graph,  aes(x = Jahr, y = Verhältnis, group = Kanton)) +
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:516:75: style: Trailing whitespace is superfluous.
+##   geom_point(aes(x = Jahr, y = Verhältnis), size = 2, color = &quot;#555555&quot;) + 
+##                                                                           ^
+## main.Rmd:517:78: style: Trailing whitespace is superfluous.
+##   geom_text(data = subset(aenderung_prozentpunkte_slope_graph, Jahr == 2009), 
+##                                                                              ^
+## main.Rmd:518:1: style: lines should not be more than 80 characters.
+##             aes(x = Jahr, y = Verhältnis, label = Kanton_label, vjust = Kanton_vjust),
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:519:1: style: lines should not be more than 80 characters.
+##             hjust = 1, family = &quot;SRG SSR Type&quot;, color = &quot;#555555&quot;, size = 3) +    
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:519:79: style: Trailing whitespace is superfluous.
+##             hjust = 1, family = &quot;SRG SSR Type&quot;, color = &quot;#555555&quot;, size = 3) +    
+##                                                                               ^~~~
+## main.Rmd:520:78: style: Trailing whitespace is superfluous.
+##   geom_text(data = subset(aenderung_prozentpunkte_slope_graph, Jahr == 2015), 
+##                                                                              ^
+## main.Rmd:524:34: style: Trailing whitespace is superfluous.
+##   theme(legend.position = &quot;none&quot;, 
+##                                  ^
+## main.Rmd:527:42: style: Trailing whitespace is superfluous.
+##     panel.grid.major.x = element_blank(), 
+##                                          ^
+## main.Rmd:529:36: style: Trailing whitespace is superfluous.
+##     axis.ticks.x = element_blank(), 
+##                                    ^
+## main.Rmd:530:36: style: Trailing whitespace is superfluous.
+##     axis.title.y = element_blank(), 
+##                                    ^
+## main.Rmd:538:3: style: Commented code should be removed.
+## # ggsave(p, filename = &quot;output/slope.png&quot;, width = 8, height = 11)
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:545:62: style: Trailing whitespace is superfluous.
+## p &lt;- ggplot(anteil_heizung_2015, aes(Energieträger, GDEKT)) + 
+##                                                              ^
+## main.Rmd:546:58: style: Trailing whitespace is superfluous.
+##   geom_tile(aes(fill = Verhältnis), colour = &quot;#f5f5f2&quot;) + 
+##                                                          ^
+## main.Rmd:547:1: style: lines should not be more than 80 characters.
+##   scale_fill_gradient(name = &quot;Anteil an allen Heizungen im Kanton&quot;, low = &quot;mediumpurple&quot;, high = &quot;khaki3&quot;, labels = percent) +
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:555:17: style: Trailing whitespace is superfluous.
+##    caption = &quot;&quot;) 
+##                 ^
+## main.Rmd:557:3: style: Commented code should be removed.
+## # ggsave(p, filename = &quot;output/heat.png&quot;, width = 8, height = 11)
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:575:71: style: Trailing whitespace is superfluous.
+##             aes(x = Verhältnis, y = Kanton, label = Verhältnis_label),  
+##                                                                       ^~
+## main.Rmd:577:55: style: Trailing whitespace is superfluous.
+##   geom_text(data = subset(dotplot_data, Jahr == 2009), 
+##                                                       ^
+## main.Rmd:580:64: style: Commas should always have a space after.
+##   scale_x_continuous(labels = scales::percent, limits = c(-.05,.6)) +
+##                                                                ^
+## main.Rmd:587:22: style: Trailing whitespace is superfluous.
+##   xlim(c(-.05, .6)) + 
+##                      ^
+## main.Rmd:592:3: style: Commented code should be removed.
+## # ggsave(p, filename = &quot;output/dotplot.png&quot;, width = 7, height = 5)
+##   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:603:1: style: lines should not be more than 80 characters.
+##   mutate(Verhältnis_klimafreundlich = round(Verhältnis, 3), Unterschied = round(Unterschied, 3)) %&gt;%  
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:603:101: style: Trailing whitespace is superfluous.
+##   mutate(Verhältnis_klimafreundlich = round(Verhältnis, 3), Unterschied = round(Unterschied, 3)) %&gt;%  
+##                                                                                                     ^~
+## main.Rmd:604:1: style: lines should not be more than 80 characters.
+##   select(Jahr, Anteil_klimafreundlich = Verhältnis_klimafreundlich, Unterschied, Kanton = GDEKT) %&gt;% 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:604:101: style: Trailing whitespace is superfluous.
+##   select(Jahr, Anteil_klimafreundlich = Verhältnis_klimafreundlich, Unterschied, Kanton = GDEKT) %&gt;% 
+##                                                                                                     ^
+## main.Rmd:607:24: style: Trailing whitespace is superfluous.
+## anteil_heizung_2015 %&gt;% 
+##                        ^
+## main.Rmd:608:48: style: Trailing whitespace is superfluous.
+##   mutate(Verhältnis = round(Verhältnis, 3)) %&gt;%  
+##                                                ^~
+## main.Rmd:609:1: style: lines should not be more than 80 characters.
+##   select(Jahr, Energietraeger = Energieträger, Anteil = Verhältnis, Kanton = GDEKT) %&gt;% 
+## ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+## main.Rmd:609:88: style: Trailing whitespace is superfluous.
+##   select(Jahr, Energietraeger = Energieträger, Anteil = Verhältnis, Kanton = GDEKT) %&gt;% 
+##                                                                                        ^</code></pre>
 </div>
 
 
