@@ -3,13 +3,10 @@
 *.Rproj
 *.Rproj.user
 *.Rhistory
-*.Rdata
 *.Rprofile
 *.html
 auth
 .~lock*
-preprocessing_*
-gmaps_key
 manifest.R
-main.html
-output/*
+output/ignore/*
+input/ignore/*
